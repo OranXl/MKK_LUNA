@@ -31,15 +31,14 @@ class PaymentResponse(BaseModel):
     amount: Decimal
     currency: str
     description: str
-    metadata_: Optional[Dict[str, Any]] = Field(None, alias="metadata")
     status: str
     idempotency_key: str
     webhook_url: Optional[str]
     created_at: datetime
     processed_at: Optional[datetime]
+    metadata: Optional[Dict[str, Any]] = None
 
     model_config = ConfigDict(
-        populate_by_name=True,
         from_attributes=True,
         json_schema_extra={
             "example": {
