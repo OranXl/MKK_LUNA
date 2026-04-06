@@ -93,28 +93,42 @@ docker-compose down
 
 ### Локальная разработка
 
-1. Установите зависимости:
+1. Установите Poetry (если не установлен):
 ```bash
-pip install -r requirements.txt
+curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-2. Запустите PostgreSQL и RabbitMQ (через Docker):
+2. Установите зависимости:
+```bash
+poetry install
+```
+
+3. Запустите PostgreSQL и RabbitMQ (через Docker):
 ```bash
 docker-compose up -d postgres rabbitmq
 ```
 
-3. Примените миграции:
+4. Примените миграции:
 ```bash
+poetry run alembic upgrade head
+```
+
+5. Запустите API:
+```bash
+poetry run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+6. В отдельном терминале запустите consumer:
+```bash
+poetry run faststream run app.consumer_main:consumer_app
+```
+
+**Альтернативно**, можно активировать виртуальное окружение Poetry:
+```bash
+poetry shell
+# Затем запускать команды без префикса "poetry run"
 alembic upgrade head
-```
-
-4. Запустите API:
-```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-5. В отдельном терминале запустите consumer:
-```bash
 faststream run app.consumer_main:consumer_app
 ```
 
@@ -200,7 +214,8 @@ curl http://localhost:8000/health
 ├── docker-compose.yml
 ├── Dockerfile.api
 ├── Dockerfile.consumer
-├── requirements.txt
+├── pyproject.toml
+├── poetry.lock
 ├── README.md
 └── TZ.md
 ```
