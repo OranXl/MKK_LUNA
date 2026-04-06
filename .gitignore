@@ -1,36 +1,13 @@
 ```
-# Python cache
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Dependencies
-.venv/
-venv/
-env/
-pip-log.txt
-pip-selfcheck.json
-
-# Logs
-*.log
-
-# Environment variables
-.env
-.env.local
-*.env.*
-
-# Testing
-.coverage
-coverage/
-htmlcov/
-.nox/
-.tox/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# Directories
+app/__pycache__/
+app/api/__pycache__/
+app/schemas/__pycache__/
+app/services/__pycache__/
 ```
