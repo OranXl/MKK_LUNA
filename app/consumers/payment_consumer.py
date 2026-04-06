@@ -5,7 +5,7 @@ from typing import Dict, Any
 
 import aiohttp
 from faststream import FastStream
-from faststream.rabbit import RabbitBroker, RabbitExchange, RabbitQueue
+from faststream.rabbit import RabbitBroker, RabbitExchange, RabbitQueue, ExchangeType
 
 from app.core.config import get_settings
 from app.db.session import async_session_maker, engine, Base
@@ -19,7 +19,7 @@ settings = get_settings()
 broker = RabbitBroker(settings.rabbitmq_url)
 
 # Объявляем обменник и очереди
-payments_exchange = RabbitExchange("payments", type="direct", durable=True)
+payments_exchange = RabbitExchange("payments", type=ExchangeType.DIRECT, durable=True)
 payments_queue = RabbitQueue(settings.payments_queue, durable=True)
 dlq_queue = RabbitQueue(settings.dlq_queue, durable=True)
 
