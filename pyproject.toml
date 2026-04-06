@@ -28,6 +28,7 @@ pytest-asyncio = "^0.23.0"
 pytest-cov = "^4.1.0"
 httpx = "^0.26.0"
 aiosqlite = "^0.19.0"
+faststream = {extras = ["cli"], version = "^0.6.7"}
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
