@@ -23,7 +23,7 @@ payments_exchange = RabbitExchange("payments", type="direct", durable=True)
 payments_queue = RabbitQueue(settings.payments_queue, durable=True)
 dlq_queue = RabbitQueue(settings.dlq_queue, durable=True)
 
-app = FastStream(broker, title="Payment Consumer", version="1.0.0")
+app = FastStream(broker)
 
 
 async def simulate_payment_processing() -> tuple[bool, str]:
@@ -72,10 +72,8 @@ async def send_webhook(webhook_url: str, payload: Dict[str, Any], max_retries: i
 
 
 @broker.subscriber(
-    queue=settings.payments_queue,
-    exchange="payments",
-    exchange_type="direct",
-    routing_key="payment.new",
+    queue=payments_queue,
+    exchange=payments_exchange,
 )
 async def process_payment(message: Dict[str, Any]):
     """
@@ -165,10 +163,8 @@ async def process_payment(message: Dict[str, Any]):
 
 
 @broker.subscriber(
-    queue=settings.dlq_queue,
-    exchange="payments",
-    exchange_type="direct",
-    routing_key="payment.dlq",
+    queue=dlq_queue,
+    exchange=payments_exchange,
 )
 async def handle_dlq_message(message: Dict[str, Any]):
     """

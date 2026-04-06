@@ -22,17 +22,9 @@ async def lifespan(app: FastAPI):
 
 def create_consumer_app() -> FastAPI:
     from faststream import FastStream
-    from faststream.rabbit import RabbitBroker
-    from app.core.config import get_settings
     from app.consumers.payment_consumer import broker, setup_queues
     
-    settings = get_settings()
-    
-    app = FastStream(
-        broker,
-        title="Payment Consumer",
-        version="1.0.0",
-    )
+    app = FastStream(broker)
     
     return app
 
