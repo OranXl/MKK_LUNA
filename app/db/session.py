@@ -6,7 +6,9 @@ settings = get_settings()
 
 
 class Base(DeclarativeBase):
-    pass
+    # Disable metadata reflection for tests with SQLite
+    if settings.database_url.startswith("sqlite"):
+        pass
 
 
 engine = create_async_engine(settings.database_url, echo=False)
