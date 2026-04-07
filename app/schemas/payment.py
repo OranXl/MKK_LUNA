@@ -36,7 +36,7 @@ class PaymentResponse(BaseModel):
     webhook_url: Optional[str]
     created_at: datetime
     processed_at: Optional[datetime]
-    metadata: Optional[Dict[str, Any]] = None
+    meta_data: Optional[Dict[str, Any]] = None
     
     model_config = ConfigDict(
         from_attributes=True,
@@ -46,7 +46,7 @@ class PaymentResponse(BaseModel):
                 "amount": 1000.00,
                 "currency": "RUB",
                 "description": "Order payment #12345",
-                "metadata": {"order_id": "12345", "user_id": "67890"},
+                "meta_data": {"order_id": "12345", "user_id": "67890"},
                 "status": "pending",
                 "idempotency_key": "unique-key-12345",
                 "webhook_url": "https://example.com/webhook",
