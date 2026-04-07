@@ -36,10 +36,11 @@ class PaymentResponse(BaseModel):
     webhook_url: Optional[str]
     created_at: datetime
     processed_at: Optional[datetime]
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = Field(None, alias="metadata_")
 
     model_config = ConfigDict(
         from_attributes=True,
+        populate_by_name=True,
         json_schema_extra={
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
