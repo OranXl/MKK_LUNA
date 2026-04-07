@@ -50,7 +50,7 @@ class PaymentDetails(PaymentResponse):
     amount: Decimal = Field(..., description="Payment amount")
     currency: str = Field(..., description="Currency code")
     description: str = Field(..., description="Payment description")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    metadata: Optional[Dict[str, Any]] = Field(None, alias="metadata_", description="Additional metadata")
     webhook_url: Optional[str] = Field(None, description="Webhook URL for notifications")
     processed_at: Optional[datetime] = Field(None, description="Payment processing timestamp")
     
