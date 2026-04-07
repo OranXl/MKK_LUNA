@@ -50,9 +50,21 @@ class PaymentDetails(PaymentResponse):
     amount: Decimal = Field(..., description="Payment amount")
     currency: str = Field(..., description="Currency code")
     description: str = Field(..., description="Payment description")
-    metadata_: Optional[Dict[str, Any]] = Field(None, alias="metadata", description="Additional metadata")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
     webhook_url: Optional[str] = Field(None, description="Webhook URL for notifications")
     processed_at: Optional[datetime] = Field(None, description="Payment processing timestamp")
+    
+    @field_validator('metadata', mode='before')
+    @classmethod
+    def validate_metadata(cls, v):
+        if v is None:
+            return None
+        if isinstance(v, dict):
+            return v
+        # Handle SQLAlchemy composite type or other objects
+        if hasattr(v, '__dict__'):
+            return {k: val for k, val in v.__dict__.items() if not k.startswith('_')}
+        return {}
     
     model_config = ConfigDict(
         from_attributes=True,
