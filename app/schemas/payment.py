@@ -59,12 +59,18 @@ class PaymentResponse(BaseModel):
     @classmethod
     def model_validate(cls, obj, *args, **kwargs):
         """Override to handle _metadata -> metadata mapping."""
+        from sqlalchemy.sql.schema import MetaData
+        
         # Get the _metadata value from the object (SQLAlchemy attribute)
         metadata_value = getattr(obj, '_metadata', None)
         
         # Fallback to metadata_ property if _metadata doesn't exist
         if metadata_value is None and hasattr(obj, 'metadata_'):
             metadata_value = obj.metadata_
+        
+        # If metadata_value is a SQLAlchemy MetaData instance, treat it as None
+        if isinstance(metadata_value, MetaData):
+            metadata_value = None
 
         # Build the validated data
         validation_data = {
