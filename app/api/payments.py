@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.session import get_db
-from app.schemas.payment import PaymentCreate, PaymentResponse
+from app.schemas.payment import PaymentCreate, PaymentResponse, PaymentDetails
 from app.services.payment import PaymentService
 from app.core.config import get_settings
 
@@ -62,7 +62,7 @@ async def create_payment(
 
 @router.get(
     "/payments/{payment_id}",
-    response_model=PaymentResponse,
+    response_model=PaymentDetails,
     dependencies=[Depends(verify_api_key)],
 )
 async def get_payment(
@@ -70,7 +70,9 @@ async def get_payment(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Get payment details by ID.
+    Get detailed payment information by ID.
+    
+    Returns full payment details including amount, currency, description, metadata, and processing timestamps.
     """
     service = PaymentService(db)
     payment = await service.get_payment(payment_id)

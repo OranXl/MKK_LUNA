@@ -45,6 +45,34 @@ class PaymentResponse(BaseModel):
     )
 
 
+class PaymentDetails(PaymentResponse):
+    """Detailed response model for getting payment information."""
+    amount: Decimal = Field(..., description="Payment amount")
+    currency: str = Field(..., description="Currency code")
+    description: str = Field(..., description="Payment description")
+    metadata_: Optional[Dict[str, Any]] = Field(None, alias="metadata", description="Additional metadata")
+    webhook_url: Optional[str] = Field(None, description="Webhook URL for notifications")
+    processed_at: Optional[datetime] = Field(None, description="Payment processing timestamp")
+    
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True,
+        json_schema_extra={
+            "example": {
+                "payment_id": "550e8400-e29b-41d4-a716-446655440000",
+                "status": "completed",
+                "created_at": "2024-01-01T12:00:00Z",
+                "amount": 1000.00,
+                "currency": "RUB",
+                "description": "Order payment #12345",
+                "metadata": {"order_id": "12345", "user_id": "67890"},
+                "webhook_url": "https://example.com/webhook",
+                "processed_at": "2024-01-01T12:00:05Z"
+            }
+        }
+    )
+
+
 class PaymentStatusUpdate(BaseModel):
     payment_id: str
     status: str
