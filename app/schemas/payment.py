@@ -64,13 +64,15 @@ class PaymentResponse(BaseModel):
         # Get the _metadata value from the object (SQLAlchemy attribute)
         metadata_value = getattr(obj, '_metadata', None)
         
-        # Fallback to metadata_ property if _metadata doesn't exist
-        if metadata_value is None and hasattr(obj, 'metadata_'):
-            metadata_value = obj.metadata_
-        
         # If metadata_value is a SQLAlchemy MetaData instance or not a dict, treat it as None
         if isinstance(metadata_value, MetaData) or (metadata_value is not None and not isinstance(metadata_value, dict)):
             metadata_value = None
+        
+        # Fallback to metadata_ property if _metadata is None or invalid
+        if metadata_value is None and hasattr(obj, 'metadata_'):
+            prop_value = obj.metadata_
+            if isinstance(prop_value, dict):
+                metadata_value = prop_value
 
         # Build the validated data
         validation_data = {
