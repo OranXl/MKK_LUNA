@@ -59,17 +59,28 @@ class PaymentResponse(BaseModel):
     @classmethod
     def model_validate(cls, obj, *args, **kwargs):
         """Override to handle metadata_ -> metadata mapping."""
-        if hasattr(obj, 'metadata_'):
-            # For SQLAlchemy objects with metadata_ property/attribute
-            obj_dict = {}
-            for c in obj.__table__.columns:
-                key = c.key
-                if key == 'metadata':
-                    obj_dict['metadata'] = getattr(obj, '_metadata', None)
-                else:
-                    obj_dict[key] = getattr(obj, key)
-            return cls(**obj_dict)
-        return super().model_validate(obj, *args, **kwargs)
+        # Get the _metadata value from the object
+        metadata_value = None
+        if hasattr(obj, '_metadata'):
+            metadata_value = getattr(obj, '_metadata', None)
+        elif hasattr(obj, 'metadata_'):
+            metadata_value = getattr(obj, 'metadata_', None)
+
+        # Build the validated data
+        validation_data = {
+            'id': getattr(obj, 'id', None),
+            'amount': getattr(obj, 'amount', None),
+            'currency': getattr(obj, 'currency', None),
+            'description': getattr(obj, 'description', None),
+            'status': getattr(obj, 'status', None),
+            'idempotency_key': getattr(obj, 'idempotency_key', None),
+            'webhook_url': getattr(obj, 'webhook_url', None),
+            'created_at': getattr(obj, 'created_at', None),
+            'processed_at': getattr(obj, 'processed_at', None),
+            'metadata': metadata_value,
+        }
+
+        return cls(**validation_data)
 
 
 class PaymentStatusUpdate(BaseModel):
