@@ -68,8 +68,8 @@ class PaymentResponse(BaseModel):
         if metadata_value is None and hasattr(obj, 'metadata_'):
             metadata_value = obj.metadata_
         
-        # If metadata_value is a SQLAlchemy MetaData instance, treat it as None
-        if isinstance(metadata_value, MetaData):
+        # If metadata_value is a SQLAlchemy MetaData instance or not a dict, treat it as None
+        if isinstance(metadata_value, MetaData) or (metadata_value is not None and not isinstance(metadata_value, dict)):
             metadata_value = None
 
         # Build the validated data
