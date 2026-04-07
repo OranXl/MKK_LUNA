@@ -2,7 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, Dict, Any
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 
 class PaymentCreate(BaseModel):
