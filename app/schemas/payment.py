@@ -36,17 +36,18 @@ class PaymentResponse(BaseModel):
     webhook_url: Optional[str]
     created_at: datetime
     processed_at: Optional[datetime]
-    meta_data: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = Field(None, alias='_metadata')
     
     model_config = ConfigDict(
         from_attributes=True,
+        populate_by_name=True,
         json_schema_extra={
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
                 "amount": 1000.00,
                 "currency": "RUB",
                 "description": "Order payment #12345",
-                "meta_data": {"order_id": "12345", "user_id": "67890"},
+                "metadata": {"order_id": "12345", "user_id": "67890"},
                 "status": "pending",
                 "idempotency_key": "unique-key-12345",
                 "webhook_url": "https://example.com/webhook",
@@ -56,39 +57,14 @@ class PaymentResponse(BaseModel):
         }
     )
     
+    @field_validator('metadata', mode='before')
     @classmethod
-    def model_validate(cls, obj, *args, **kwargs):
-        """Override to handle _metadata -> metadata mapping."""
+    def validate_metadata(cls, v):
+        """Ensure metadata is a dict or None."""
         from sqlalchemy.sql.schema import MetaData
-        
-        # Get the _metadata value from the object (SQLAlchemy attribute)
-        metadata_value = getattr(obj, '_metadata', None)
-        
-        # If metadata_value is a SQLAlchemy MetaData instance or not a dict, treat it as None
-        if isinstance(metadata_value, MetaData) or (metadata_value is not None and not isinstance(metadata_value, dict)):
-            metadata_value = None
-        
-        # Fallback to metadata_ property if _metadata is None or invalid
-        if metadata_value is None and hasattr(obj, 'metadata_'):
-            prop_value = obj.metadata_
-            if isinstance(prop_value, dict):
-                metadata_value = prop_value
-
-        # Build the validated data
-        validation_data = {
-            'id': getattr(obj, 'id', None),
-            'amount': getattr(obj, 'amount', None),
-            'currency': getattr(obj, 'currency', None),
-            'description': getattr(obj, 'description', None),
-            'status': getattr(obj, 'status', None),
-            'idempotency_key': getattr(obj, 'idempotency_key', None),
-            'webhook_url': getattr(obj, 'webhook_url', None),
-            'created_at': getattr(obj, 'created_at', None),
-            'processed_at': getattr(obj, 'processed_at', None),
-            'metadata': metadata_value,
-        }
-
-        return cls(**validation_data)
+        if isinstance(v, MetaData) or not isinstance(v, (dict, type(None))):
+            return None
+        return v
 
 
 class PaymentStatusUpdate(BaseModel):
