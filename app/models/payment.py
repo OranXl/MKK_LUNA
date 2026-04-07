@@ -32,7 +32,12 @@ class Payment(Base):
     @property
     def metadata_(self) -> Optional[Dict[str, Any]]:
         """Get metadata from _metadata attribute."""
-        return self._metadata
+        # Avoid returning SQLAlchemy MetaData instance
+        if hasattr(self, '_metadata') and self._metadata is not None:
+            val = self.__dict__.get('_metadata')
+            if isinstance(val, dict):
+                return val
+        return None
     
     @metadata_.setter
     def metadata_(self, value: Optional[Dict[str, Any]]) -> None:
