@@ -17,7 +17,7 @@ class Payment(Base):
     amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    metadata_: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True, name="metadata")
+    _metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column("metadata", JSON, nullable=True)
     status: Mapped[str] = mapped_column(String(20), default=PaymentStatus.PENDING.value)
     idempotency_key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
     webhook_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
@@ -28,6 +28,16 @@ class Payment(Base):
         Index("idx_payment_status", "status"),
         Index("idx_payment_created_at", "created_at"),
     )
+
+    @property
+    def metadata_(self) -> Optional[Dict[str, Any]]:
+        """Get metadata from _metadata attribute."""
+        return self._metadata
+    
+    @metadata_.setter
+    def metadata_(self, value: Optional[Dict[str, Any]]) -> None:
+        """Set metadata to _metadata attribute."""
+        self._metadata = value
 
     def __repr__(self) -> str:
         return f"<Payment(id={self.id}, status={self.status}, amount={self.amount} {self.currency})>"

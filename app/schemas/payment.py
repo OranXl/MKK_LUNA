@@ -36,11 +36,10 @@ class PaymentResponse(BaseModel):
     webhook_url: Optional[str]
     created_at: datetime
     processed_at: Optional[datetime]
-    metadata: Optional[Dict[str, Any]] = Field(None, alias="metadata_")
-
+    metadata: Optional[Dict[str, Any]] = None
+    
     model_config = ConfigDict(
         from_attributes=True,
-        populate_by_name=True,
         json_schema_extra={
             "example": {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -56,6 +55,21 @@ class PaymentResponse(BaseModel):
             }
         }
     )
+    
+    @classmethod
+    def model_validate(cls, obj, *args, **kwargs):
+        """Override to handle metadata_ -> metadata mapping."""
+        if hasattr(obj, 'metadata_'):
+            # For SQLAlchemy objects with metadata_ property/attribute
+            obj_dict = {}
+            for c in obj.__table__.columns:
+                key = c.key
+                if key == 'metadata':
+                    obj_dict['metadata'] = getattr(obj, '_metadata', None)
+                else:
+                    obj_dict[key] = getattr(obj, key)
+            return cls(**obj_dict)
+        return super().model_validate(obj, *args, **kwargs)
 
 
 class PaymentStatusUpdate(BaseModel):
