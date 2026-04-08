@@ -153,16 +153,9 @@ curl -X POST http://localhost:8000/api/v1/payments \
 Ответ:
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "amount": "1000.00",
-  "currency": "RUB",
-  "description": "Order payment #12345",
-  "metadata": {"order_id": "12345", "user_id": "67890"},
+  "payment_id": "b44f9b52-4c63-40be-a8a9-ae7f1b6f78ed",
   "status": "pending",
-  "idempotency_key": "unique-key-12345",
-  "webhook_url": "https://webhook.site/your-unique-id",
-  "created_at": "2024-01-01T12:00:00Z",
-  "processed_at": null
+  "created_at": "2026-04-08T08:43:26.059870Z"
 }
 ```
 
